@@ -1,63 +1,57 @@
 ![ConvertX](images/logo.png)
 
-# ConvertX
+# ConvertX 中文版（ConvertX-zh）
 
+[![上游项目](https://img.shields.io/badge/ConvertX-C4illin%2FConvertX-blue?logo=github)](https://github.com/C4illin/ConvertX)
 [![Docker](https://github.com/C4illin/ConvertX/actions/workflows/docker-publish.yml/badge.svg?branch=main)](https://github.com/C4illin/ConvertX/actions/workflows/docker-publish.yml)
-[![ghcr.io Pulls](https://img.shields.io/badge/dynamic/json?logo=github&url=https%3A%2F%2Fipitio.github.io%2Fbackage%2FC4illin%2FConvertX%2Fconvertx.json&query=%24.downloads&label=ghcr.io%20pulls&cacheSeconds=14400)](https://github.com/C4illin/ConvertX/pkgs/container/ConvertX)
-[![Docker Pulls](https://img.shields.io/docker/pulls/c4illin/convertx?style=flat&logo=docker&label=dockerhub%20pulls&link=https%3A%2F%2Fhub.docker.com%2Frepository%2Fdocker%2Fc4illin%2Fconvertx%2Fgeneral)](https://hub.docker.com/r/c4illin/convertx)
-[![GitHub Release](https://img.shields.io/github/v/release/C4illin/ConvertX)](https://github.com/C4illin/ConvertX/pkgs/container/convertx)
-![GitHub commits since latest release](https://img.shields.io/github/commits-since/C4illin/ConvertX/latest)
-![GitHub repo size](https://img.shields.io/github/repo-size/C4illin/ConvertX)
-![Docker container size](https://ghcr-badge.egpl.dev/c4illin/convertx/size?color=%230375b6&tag=latest&label=image+size&trim=)
+[![GitHub Release](https://img.shields.io/github/v/release/C4illin/ConvertX)](https://github.com/C4illin/ConvertX/releases)
 
-<a href="https://trendshift.io/repositories/13818" target="_blank"><img src="https://trendshift.io/api/badge/repositories/13818" alt="C4illin%2FConvertX | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+自托管在线文件转换服务，支持超过一千种格式。基于 TypeScript、Bun 与 Elysia 构建。
 
-<!-- ![Dev image size](https://ghcr-badge.egpl.dev/c4illin/convertx/size?color=%230375b6&tag=main&label=dev+image&trim=) -->
+本仓库是 [ConvertX](https://github.com/C4illin/ConvertX) 的中文界面版本，在上游能力基础上增加了 **英文 / 简体中文** 多语言切换。
 
-A self-hosted online file converter. Supports over a thousand different formats. Written with TypeScript, Bun and Elysia.
+## 特性
 
-## Features
+- 文件格式互转
+- 支持一次处理多个文件
+- 密码保护
+- 多账户
+- 多语言界面（English / 简体中文），可在页头切换
 
-- Convert files to different formats
-- Process multiple files at once
-- Password protection
-- Multiple accounts
-- Multi-language UI (English / 简体中文), switchable from the header
+## 支持的转换器
 
-## Converters supported
-
-| Converter                                                       | Use case         | Converts from | Converts to |
-| --------------------------------------------------------------- | ---------------- | ------------- | ----------- |
-| [Inkscape](https://inkscape.org/)                               | Vector images    | 7             | 17          |
-| [libjxl](https://github.com/libjxl/libjxl)                      | JPEG XL          | 11            | 11          |
-| [resvg](https://github.com/RazrFalcon/resvg)                    | SVG              | 1             | 1           |
-| [Vips](https://github.com/libvips/libvips)                      | Images           | 45            | 23          |
-| [libheif](https://github.com/strukturag/libheif)                | HEIF             | 2             | 4           |
-| [XeLaTeX](https://tug.org/xetex/)                               | LaTeX            | 1             | 1           |
-| [Calibre](https://calibre-ebook.com/)                           | E-books          | 26            | 19          |
-| [LibreOffice](https://www.libreoffice.org/)                     | Documents        | 41            | 22          |
-| [Dasel](https://github.com/TomWright/dasel)                     | Data Files       | 5             | 4           |
-| [Pandoc](https://pandoc.org/)                                   | Documents        | 43            | 65          |
-| [msgconvert](https://github.com/mvz/email-outlook-message-perl) | Outlook          | 1             | 1           |
-| VCF to CSV                                                      | Contacts         | 1             | 1           |
-| [dvisvgm](https://dvisvgm.de/)                                  | Vector images    | 4             | 2           |
-| [ImageMagick](https://imagemagick.org/)                         | Images           | 245           | 183         |
-| [GraphicsMagick](http://www.graphicsmagick.org/)                | Images           | 167           | 130         |
-| [Assimp](https://github.com/assimp/assimp)                      | 3D Assets        | 77            | 23          |
-| [FFmpeg](https://ffmpeg.org/)                                   | Video            | ~472          | ~199        |
-| [Potrace](https://potrace.sourceforge.net/)                     | Raster to vector | 4             | 11          |
-| [VTracer](https://github.com/visioncortex/vtracer)              | Raster to vector | 8             | 1           |
-| [Markitdown](https://github.com/microsoft/markitdown)           | Documents        | 6             | 1           |
-| [pdftops](https://poppler.freedesktop.org/)                     | Documents        | 1             | 2           |
+| 转换器                                                     | 用途           | 可输入格式数 | 可输出格式数 |
+| ---------------------------------------------------------- | -------------- | ------------ | ------------ |
+| [Inkscape](https://inkscape.org/)                          | 矢量图         | 7            | 17           |
+| [libjxl](https://github.com/libjxl/libjxl)                 | JPEG XL        | 11           | 11           |
+| [resvg](https://github.com/RazrFalcon/resvg)               | SVG            | 1            | 1            |
+| [Vips](https://github.com/libvips/libvips)                 | 图片           | 45           | 23           |
+| [libheif](https://github.com/strukturag/libheif)           | HEIF           | 2            | 4            |
+| [XeLaTeX](https://tug.org/xetex/)                          | LaTeX          | 1            | 1            |
+| [Calibre](https://calibre-ebook.com/)                      | 电子书         | 26           | 19           |
+| [LibreOffice](https://www.libreoffice.org/)                | 文档           | 41           | 22           |
+| [Dasel](https://github.com/TomWright/dasel)                | 数据文件       | 5            | 4            |
+| [Pandoc](https://pandoc.org/)                              | 文档           | 43           | 65           |
+| [msgconvert](https://github.com/mvz/email-outlook-message-perl) | Outlook 邮件 | 1            | 1            |
+| VCF 转 CSV                                                 | 通讯录         | 1            | 1            |
+| [dvisvgm](https://dvisvgm.de/)                             | 矢量图         | 4            | 2            |
+| [ImageMagick](https://imagemagick.org/)                    | 图片           | 245          | 183          |
+| [GraphicsMagick](http://www.graphicsmagick.org/)           | 图片           | 167          | 130          |
+| [Assimp](https://github.com/assimp/assimp)                 | 3D 资源        | 77           | 23           |
+| [FFmpeg](https://ffmpeg.org/)                              | 视频           | ~472         | ~199         |
+| [Potrace](https://potrace.sourceforge.net/)                | 位图转矢量     | 4            | 11           |
+| [VTracer](https://github.com/visioncortex/vtracer)         | 位图转矢量     | 8            | 1            |
+| [Markitdown](https://github.com/microsoft/markitdown)      | 文档           | 6            | 1            |
+| [pdftops](https://poppler.freedesktop.org/)                | 文档           | 1            | 2            |
 
 <!-- many ffmpeg fileformats are duplicates -->
 
-Any missing converter? Open an issue or pull request!
+缺少某个转换器？欢迎提 Issue 或 PR！
 
-## Deployment
+## 部署
 
 > [!WARNING]
-> If you can't login, make sure you are accessing the service over localhost or https otherwise set HTTP_ALLOWED=true
+> 若无法登录，请确认通过 localhost 或 HTTPS 访问；否则请将 `HTTP_ALLOWED=true`。
 
 ```yml
 # docker-compose.yml
@@ -69,100 +63,80 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - JWT_SECRET=aLongAndSecretStringUsedToSignTheJSONWebToken1234 # will use randomUUID() if unset
-      # - HTTP_ALLOWED=true # uncomment this if accessing it over a non-https connection
+      - JWT_SECRET=aLongAndSecretStringUsedToSignTheJSONWebToken1234 # 未设置时会使用 randomUUID()
+      # - HTTP_ALLOWED=true # 非 HTTPS 访问时取消注释
+      # - LANGUAGE=zh-CN # 默认界面语言（也可用页头切换）
     volumes:
       - ./data:/app/data
 ```
 
-or
+或：
 
 ```bash
 docker run -p 3000:3000 -v ./data:/app/data ghcr.io/c4illin/convertx
 ```
 
-Then visit `http://localhost:3000` in your browser and create your account. Don't leave it unconfigured and open, as anyone can register the first account.
+然后在浏览器打开 `http://localhost:3000` 创建账户。请勿在未配置的情况下暴露到公网，否则任何人都能注册第一个账户。
 
-If you get unable to open database file run `chown -R $USER:$USER path` on the path you choose.
+若提示无法打开数据库文件，请对数据目录执行 `chown -R $USER:$USER path`。
 
-### Environment variables
+### 环境变量
 
-All are optional, JWT_SECRET is recommended to be set.
+以下均为可选，建议设置 `JWT_SECRET`。
 
-| Name                         | Default                                            | Description                                                                                                                                                                         |
-| ---------------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JWT_SECRET                   | when unset it will use the value from randomUUID() | A long and secret string used to sign the JSON Web Token                                                                                                                            |
-| ACCOUNT_REGISTRATION         | false                                              | Allow users to register accounts                                                                                                                                                    |
-| HTTP_ALLOWED                 | false                                              | Allow HTTP connections, only set this to true locally                                                                                                                               |
-| ALLOW_UNAUTHENTICATED        | false                                              | Allow unauthenticated users to use the service, only set this to true locally                                                                                                       |
-| AUTO_DELETE_EVERY_N_HOURS    | 24                                                 | Checks every n hours for files older then n hours and deletes them, set to 0 to disable                                                                                             |
-| WEBROOT                      |                                                    | The address to the root path setting this to "/convert" will serve the website on "example.com/convert/"                                                                            |
-| FFMPEG_ARGS                  |                                                    | Arguments to pass to the input file of ffmpeg, e.g. `-hwaccel vaapi`. See https://github.com/C4illin/ConvertX/issues/190 for more info about hw-acceleration.                       |
-| FFMPEG_OUTPUT_ARGS           |                                                    | Arguments to pass to the output of ffmpeg, e.g. `-preset veryfast`                                                                                                                  |
-| HIDE_HISTORY                 | false                                              | Hide the history page                                                                                                                                                               |
-| LANGUAGE                     | en                                                 | Default UI/date language ([BCP 47](https://en.wikipedia.org/wiki/IETF_language_tag)), e.g. `en` or `zh-CN`. Browser `Accept-Language` and the user language switcher override this. |
-| UNAUTHENTICATED_USER_SHARING | false                                              | Shares conversion history between all unauthenticated users                                                                                                                         |
-| MAX_CONVERT_PROCESS          | 0                                                  | Maximum number of concurrent conversion processes allowed. Set to 0 for unlimited.                                                                                                  |
-| PORT                         | 3000                                               | Application listen port                                                                                                                                                             |
+| 变量名 | 默认值 | 说明 |
+| ------ | ------ | ---- |
+| JWT_SECRET | 未设置时使用 randomUUID() | 用于签名 JWT 的长随机字符串 |
+| ACCOUNT_REGISTRATION | false | 是否允许用户注册账户 |
+| HTTP_ALLOWED | false | 是否允许 HTTP 连接，仅建议本地开启 |
+| ALLOW_UNAUTHENTICATED | false | 是否允许未登录使用，仅建议本地开启 |
+| AUTO_DELETE_EVERY_N_HOURS | 24 | 每隔 n 小时清理超过 n 小时的文件，设为 0 禁用 |
+| WEBROOT | | 根路径前缀，设为 `/convert` 时站点位于 `example.com/convert/` |
+| FFMPEG_ARGS | | 传给 ffmpeg 输入的参数，如 `-hwaccel vaapi`，硬件加速见 [issue #190](https://github.com/C4illin/ConvertX/issues/190) |
+| FFMPEG_OUTPUT_ARGS | | 传给 ffmpeg 输出的参数，如 `-preset veryfast` |
+| HIDE_HISTORY | false | 隐藏历史记录页 |
+| LANGUAGE | en | 默认界面/日期语言（[BCP 47](https://en.wikipedia.org/wiki/IETF_language_tag)），如 `en`、`zh-CN`；浏览器 `Accept-Language` 与页头语言切换优先 |
+| UNAUTHENTICATED_USER_SHARING | false | 未登录用户共享转换历史 |
+| MAX_CONVERT_PROCESS | 0 | 最大并发转换进程数，0 表示不限制 |
+| PORT | 3000 | 监听端口 |
 
-### Docker images
+### Docker 镜像
 
-There is a `:latest` tag that is updated with every release and a `:main` tag that is updated with every push to the main branch. `:latest` is recommended for normal use.
+`:latest` 随每次发布更新，`:main` 随 main 分支推送更新；日常使用推荐 `:latest`。
 
-The image is available on [GitHub Container Registry](https://github.com/C4illin/ConvertX/pkgs/container/ConvertX) and [Docker Hub](https://hub.docker.com/r/c4illin/convertx).
+镜像可在 [GitHub Container Registry](https://github.com/C4illin/ConvertX/pkgs/container/ConvertX) 与 [Docker Hub](https://hub.docker.com/r/c4illin/convertx) 获取。
 
-| Image                                  | What it is                       |
-| -------------------------------------- | -------------------------------- |
-| `image: ghcr.io/c4illin/convertx`      | The latest release on ghcr       |
-| `image: ghcr.io/c4illin/convertx:main` | The latest commit on ghcr        |
-| `image: c4illin/convertx`              | The latest release on docker hub |
-| `image: c4illin/convertx:main`         | The latest commit on docker hub  |
+| 镜像 | 说明 |
+| ---- | ---- |
+| `image: ghcr.io/c4illin/convertx` | ghcr 最新 release |
+| `image: ghcr.io/c4illin/convertx:main` | ghcr main 最新提交 |
+| `image: c4illin/convertx` | Docker Hub 最新 release |
+| `image: c4illin/convertx:main` | Docker Hub main 最新提交 |
 
-![Release image size](https://ghcr-badge.egpl.dev/c4illin/convertx/size?color=%230375b6&tag=latest&label=release+image&trim=)
-![Dev image size](https://ghcr-badge.egpl.dev/c4illin/convertx/size?color=%230375b6&tag=main&label=dev+image&trim=)
-
-<!-- Dockerhub was introduced in 0.9.0 and older releases -->
-
-### Tutorial
+### 部署教程
 
 > [!NOTE]
-> These are written by other people, and may be outdated, incorrect or wrong.
+> 以下教程来自第三方，可能过时或不准确。
 
-Tutorial in french: <https://belginux.com/installer-convertx-avec-docker/>
+- 中文教程：<https://xzllll.com/24092901/>
+- 法语教程：<https://belginux.com/installer-convertx-avec-docker/>
+- 波兰语教程：<https://www.kreatywnyprogramista.pl/convertx-lokalny-konwerter-plikow>
 
-Tutorial in chinese: <https://xzllll.com/24092901/>
-
-Tutorial in polish: <https://www.kreatywnyprogramista.pl/convertx-lokalny-konwerter-plikow>
-
-## Screenshots
+## 界面预览
 
 ![ConvertX Preview](images/preview.png)
 
-## Development
+## 本地开发
 
-0. Install [Bun](https://bun.sh/) and Git
-1. Clone the repository
+0. 安装 [Bun](https://bun.sh/) 与 Git
+1. 克隆仓库
 2. `bun install`
 3. `bun run dev`
 
-Pull requests are welcome! See open issues for the list of todos. The ones tagged with "converter request" are quite easy. Help with docs and cleaning up in issues are also very welcome!
+欢迎提交 PR。Issue 中标记 “converter request” 的通常较易实现；文档与 issue 整理同样欢迎。
 
-Use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/#summary) for commit messages.
+提交信息请使用 [Conventional Commits](https://www.conventionalcommits.org/zh/v1.0.0/)。
 
-## Contributors
+## 致谢
 
-<a href="https://github.com/C4illin/ConvertX/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=C4illin/ConvertX" alt="Image with all contributors"/>
-</a>
-
-![Alt](https://repobeats.axiom.co/api/embed/dcdabd0564fcdcccbf5680c1bdc2efad54a3d4d9.svg "Repobeats analytics image")
-
-## Star History
-
-<a href="https://github.com/C4illin/ConvertX/stargazers">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=C4illin/ConvertX&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=C4illin/ConvertX&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=C4illin/ConvertX&type=Date" />
- </picture>
-</a>
+本项目基于上游 [C4illin/ConvertX](https://github.com/C4illin/ConvertX) 汉化与维护。若你只需要英文原版，请优先使用上游仓库。
