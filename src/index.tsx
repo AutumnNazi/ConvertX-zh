@@ -18,6 +18,7 @@ import { root } from "./pages/root";
 import { upload } from "./pages/upload";
 import { user } from "./pages/user";
 import { healthcheck } from "./pages/healthcheck";
+import { localePlugin } from "./i18n";
 
 export const uploadsDir = "./data/uploads/";
 export const outputDir = "./data/output/";
@@ -39,6 +40,7 @@ const app = new Elysia({
     }),
   )
   .use(user)
+  .use(localePlugin)
   .use(root)
   .use(upload)
   .use(history)

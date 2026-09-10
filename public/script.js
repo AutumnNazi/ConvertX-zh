@@ -1,4 +1,5 @@
 const webroot = document.querySelector("meta[name='webroot']").content;
+const I18N = window.__I18N__ || {};
 const fileInput = document.querySelector('input[type="file"]');
 const dropZone = document.getElementById("dropzone");
 const convertButton = document.querySelector("input[type='submit']");
@@ -42,7 +43,7 @@ function handleFile(file) {
     <td>${file.name}</td>
     <td><progress max="100" class="inline-block h-2 appearance-none overflow-hidden rounded-full border-0 bg-neutral-700 bg-none text-accent-500 accent-accent-500 [&::-moz-progress-bar]:bg-accent-500 [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:[background:none] [&[value]::-webkit-progress-value]:bg-accent-500 [&[value]::-webkit-progress-value]:transition-[inline-size]"></progress></td>
     <td>${(file.size / 1024).toFixed(2)} kB</td>
-    <td><button type="button" class="text-accent-500 hover:underline" onclick="deleteRow(this)">Remove</button></td>
+    <td><button type="button" class="text-accent-500 hover:underline" onclick="deleteRow(this)">${I18N.remove || "Remove"}</button></td>
   `;
 
   if (!fileType) {
@@ -111,7 +112,9 @@ const updateSearchBar = () => {
     for (const target of targets) {
       target.onmousedown = () => {
         convertToElement.value = target.dataset.value;
-        convertToInput.value = `${target.dataset.target} using ${target.dataset.converter}`;
+        convertToInput.value = (I18N.usingFormat || "{target} using {converter}")
+          .replace("{target}", target.dataset.target)
+          .replace("{converter}", target.dataset.converter);
         formatSelected = true;
         if (pendingFiles === 0 && fileNames.length > 0) {
           convertButton.disabled = false;
@@ -162,7 +165,8 @@ fileInput.addEventListener("change", (e) => {
 
 const setTitle = () => {
   const title = document.querySelector("h1");
-  title.textContent = `Convert ${fileType ? `.${fileType}` : ""}`;
+  const baseTitle = I18N.convertTitle || "Convert";
+  title.textContent = fileType ? `${baseTitle} .${fileType}` : baseTitle;
 };
 
 // Add a onclick for the delete button
@@ -198,7 +202,7 @@ const deleteRow = (target) => {
 
 const uploadFile = (file) => {
   convertButton.disabled = true;
-  convertButton.textContent = "Uploading...";
+  convertButton.textContent = I18N.uploading || "Uploading...";
   pendingFiles += 1;
 
   const formData = new FormData();
@@ -216,7 +220,7 @@ const uploadFile = (file) => {
       if (formatSelected) {
         convertButton.disabled = false;
       }
-      convertButton.textContent = "Convert";
+      convertButton.textContent = I18N.convert || "Convert";
     }
 
     //Remove the progress bar when upload is done

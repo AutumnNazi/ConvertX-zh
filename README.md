@@ -22,6 +22,7 @@ A self-hosted online file converter. Supports over a thousand different formats.
 - Process multiple files at once
 - Password protection
 - Multiple accounts
+- Multi-language UI (English / 简体中文), switchable from the header
 
 ## Converters supported
 
@@ -88,21 +89,21 @@ If you get unable to open database file run `chown -R $USER:$USER path` on the p
 
 All are optional, JWT_SECRET is recommended to be set.
 
-| Name                         | Default                                            | Description                                                                                                                                                   |
-| ---------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JWT_SECRET                   | when unset it will use the value from randomUUID() | A long and secret string used to sign the JSON Web Token                                                                                                      |
-| ACCOUNT_REGISTRATION         | false                                              | Allow users to register accounts                                                                                                                              |
-| HTTP_ALLOWED                 | false                                              | Allow HTTP connections, only set this to true locally                                                                                                         |
-| ALLOW_UNAUTHENTICATED        | false                                              | Allow unauthenticated users to use the service, only set this to true locally                                                                                 |
-| AUTO_DELETE_EVERY_N_HOURS    | 24                                                 | Checks every n hours for files older then n hours and deletes them, set to 0 to disable                                                                       |
-| WEBROOT                      |                                                    | The address to the root path setting this to "/convert" will serve the website on "example.com/convert/"                                                      |
-| FFMPEG_ARGS                  |                                                    | Arguments to pass to the input file of ffmpeg, e.g. `-hwaccel vaapi`. See https://github.com/C4illin/ConvertX/issues/190 for more info about hw-acceleration. |
-| FFMPEG_OUTPUT_ARGS           |                                                    | Arguments to pass to the output of ffmpeg, e.g. `-preset veryfast`                                                                                            |
-| HIDE_HISTORY                 | false                                              | Hide the history page                                                                                                                                         |
-| LANGUAGE                     | en                                                 | Language to format date strings in, specified as a [BCP 47 language tag](https://en.wikipedia.org/wiki/IETF_language_tag)                                     |
-| UNAUTHENTICATED_USER_SHARING | false                                              | Shares conversion history between all unauthenticated users                                                                                                   |
-| MAX_CONVERT_PROCESS          | 0                                                  | Maximum number of concurrent conversion processes allowed. Set to 0 for unlimited.                                                                            |
-| PORT                         | 3000                                               | Application listen port                                                                                                                                       |
+| Name                         | Default                                            | Description                                                                                                                                                                         |
+| ---------------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JWT_SECRET                   | when unset it will use the value from randomUUID() | A long and secret string used to sign the JSON Web Token                                                                                                                            |
+| ACCOUNT_REGISTRATION         | false                                              | Allow users to register accounts                                                                                                                                                    |
+| HTTP_ALLOWED                 | false                                              | Allow HTTP connections, only set this to true locally                                                                                                                               |
+| ALLOW_UNAUTHENTICATED        | false                                              | Allow unauthenticated users to use the service, only set this to true locally                                                                                                       |
+| AUTO_DELETE_EVERY_N_HOURS    | 24                                                 | Checks every n hours for files older then n hours and deletes them, set to 0 to disable                                                                                             |
+| WEBROOT                      |                                                    | The address to the root path setting this to "/convert" will serve the website on "example.com/convert/"                                                                            |
+| FFMPEG_ARGS                  |                                                    | Arguments to pass to the input file of ffmpeg, e.g. `-hwaccel vaapi`. See https://github.com/C4illin/ConvertX/issues/190 for more info about hw-acceleration.                       |
+| FFMPEG_OUTPUT_ARGS           |                                                    | Arguments to pass to the output of ffmpeg, e.g. `-preset veryfast`                                                                                                                  |
+| HIDE_HISTORY                 | false                                              | Hide the history page                                                                                                                                                               |
+| LANGUAGE                     | en                                                 | Default UI/date language ([BCP 47](https://en.wikipedia.org/wiki/IETF_language_tag)), e.g. `en` or `zh-CN`. Browser `Accept-Language` and the user language switcher override this. |
+| UNAUTHENTICATED_USER_SHARING | false                                              | Shares conversion history between all unauthenticated users                                                                                                                         |
+| MAX_CONVERT_PROCESS          | 0                                                  | Maximum number of concurrent conversion processes allowed. Set to 0 for unlimited.                                                                                                  |
+| PORT                         | 3000                                               | Application listen port                                                                                                                                                             |
 
 ### Docker images
 

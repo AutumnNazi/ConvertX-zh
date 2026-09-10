@@ -1,13 +1,14 @@
 import { Elysia, t } from "elysia";
 import db from "../db/db";
 import { WEBROOT } from "../helpers/env";
+import { getDict, getLocaleFromRequest } from "../i18n";
 import { uploadsDir } from "../index";
 import { userService } from "./user";
 import sanitize from "sanitize-filename";
 
 export const upload = new Elysia().use(userService).post(
   "/upload",
-  async ({ body, redirect, user, cookie: { jobId } }) => {
+  async ({ body, redirect, user, request, cookie: { jobId, lang } }) => {
     if (!jobId?.value) {
       return redirect(`${WEBROOT}/`, 302);
     }
@@ -35,7 +36,7 @@ export const upload = new Elysia().use(userService).post(
     }
 
     return {
-      message: "Files uploaded successfully.",
+      message: getDict(getLocaleFromRequest(request, lang?.value)).api.filesUploaded,
     };
   },
   { body: t.Object({ file: t.Files() }), auth: true },

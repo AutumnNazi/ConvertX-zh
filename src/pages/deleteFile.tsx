@@ -3,13 +3,14 @@ import { Elysia, t } from "elysia";
 import { uploadsDir } from "..";
 import db from "../db/db";
 import { WEBROOT } from "../helpers/env";
+import { getDict, getLocaleFromRequest } from "../i18n";
 import { userService } from "./user";
 import sanitize from "sanitize-filename";
 import path from "node:path";
 
 export const deleteFile = new Elysia().use(userService).post(
   "/delete",
-  async ({ body, redirect, cookie: { jobId }, user }) => {
+  async ({ body, redirect, request, cookie: { jobId, lang }, user }) => {
     if (!jobId?.value) {
       return redirect(`${WEBROOT}/`, 302);
     }
@@ -30,7 +31,7 @@ export const deleteFile = new Elysia().use(userService).post(
     await unlink(targetPath);
 
     return {
-      message: "File deleted successfully.",
+      message: getDict(getLocaleFromRequest(request, lang?.value)).api.fileDeleted,
     };
   },
   { body: t.Object({ filename: t.String() }), auth: true },

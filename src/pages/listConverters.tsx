@@ -3,15 +3,24 @@ import { BaseHtml } from "../components/base";
 import { Header } from "../components/header";
 import { getAllInputs, getAllTargets } from "../converters/main";
 import { ALLOW_UNAUTHENTICATED, WEBROOT } from "../helpers/env";
+import { getDict, getLocaleFromRequest } from "../i18n";
 import { userService } from "./user";
 
 export const listConverters = new Elysia().use(userService).get(
   "/converters",
-  async () => {
+  async ({ request, cookie: { lang } }) => {
+    const locale = getLocaleFromRequest(request, lang?.value);
+    const dict = getDict(locale);
+
     return (
-      <BaseHtml webroot={WEBROOT} title="ConvertX | Converters">
+      <BaseHtml webroot={WEBROOT} title={dict.converters.title} locale={locale}>
         <>
-          <Header webroot={WEBROOT} allowUnauthenticated={ALLOW_UNAUTHENTICATED} loggedIn />
+          <Header
+            webroot={WEBROOT}
+            allowUnauthenticated={ALLOW_UNAUTHENTICATED}
+            locale={locale}
+            loggedIn
+          />
           <main
             class={`
               w-full flex-1 px-2
@@ -19,7 +28,9 @@ export const listConverters = new Elysia().use(userService).get(
             `}
           >
             <article class="article">
-              <h1 class="mb-4 text-xl">Converters</h1>
+              <h1 class="mb-4 text-xl" safe>
+                {dict.converters.heading}
+              </h1>
               <table
                 class={`
                   w-full table-auto rounded-sm bg-neutral-900 text-left
@@ -30,9 +41,9 @@ export const listConverters = new Elysia().use(userService).get(
               >
                 <thead>
                   <tr>
-                    <th class="mx-4 my-2">Converter</th>
-                    <th class="mx-4 my-2">From (Count)</th>
-                    <th class="mx-4 my-2">To (Count)</th>
+                    <th class="mx-4 my-2">{dict.converters.converter}</th>
+                    <th class="mx-4 my-2">{dict.converters.fromCount}</th>
+                    <th class="mx-4 my-2">{dict.converters.toCount}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -42,7 +53,7 @@ export const listConverters = new Elysia().use(userService).get(
                       <tr>
                         <td safe>{converter}</td>
                         <td>
-                          Count: {inputs.length}
+                          <span safe>{dict.count}:</span> {inputs.length}
                           <ul>
                             {inputs.map((input) => (
                               <li safe>{input}</li>
@@ -50,7 +61,7 @@ export const listConverters = new Elysia().use(userService).get(
                           </ul>
                         </td>
                         <td>
-                          Count: {targets.length}
+                          <span safe>{dict.count}:</span> {targets.length}
                           <ul>
                             {targets.map((target) => (
                               <li safe>{target}</li>

@@ -14,6 +14,11 @@ export const HIDE_HISTORY = process.env.HIDE_HISTORY?.toLowerCase() === "true" |
 
 export const WEBROOT = process.env.WEBROOT ?? "";
 
+/**
+ * Server default language (BCP 47). Used for date formatting and as UI fallback
+ * when the browser does not send a usable Accept-Language header.
+ * User cookie `lang` and Accept-Language take priority for UI locale.
+ */
 export const LANGUAGE = process.env.LANGUAGE?.toLowerCase() || "en";
 
 export const MAX_CONVERT_PROCESS =

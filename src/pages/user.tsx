@@ -12,6 +12,7 @@ import {
   HTTP_ALLOWED,
   WEBROOT,
 } from "../helpers/env";
+import { getDict, getLocaleFromRequest } from "../i18n";
 
 export let FIRST_RUN = db.query("SELECT * FROM users").get() === null || false;
 
@@ -34,26 +35,29 @@ export const userService = new Elysia({ name: "user/service" })
     session: t.Cookie({
       auth: t.String(),
       jobId: t.Optional(t.String()),
+      lang: t.Optional(t.String()),
     }),
     optionalSession: t.Cookie({
       auth: t.Optional(t.String()),
       jobId: t.Optional(t.String()),
+      lang: t.Optional(t.String()),
     }),
   })
   .macro("auth", {
     cookie: "session",
-    async resolve({ status, jwt, cookie: { auth } }) {
+    async resolve({ status, jwt, cookie: { auth }, request }) {
+      const dict = getDict(getLocaleFromRequest(request));
       if (!auth.value) {
         return status(401, {
           success: false,
-          message: "Unauthorized",
+          message: dict.api.unauthorized,
         });
       }
       const user = await jwt.verify(auth.value);
       if (!user) {
         return status(401, {
           success: false,
-          message: "Unauthorized",
+          message: dict.api.unauthorized,
         });
       }
       return {
@@ -65,51 +69,58 @@ export const userService = new Elysia({ name: "user/service" })
 
 export const user = new Elysia()
   .use(userService)
-  .get("/setup", ({ redirect }) => {
+  .get("/setup", ({ redirect, request, cookie: { lang } }) => {
     if (!FIRST_RUN) {
       return redirect(`${WEBROOT}/login`, 302);
     }
 
+    const locale = getLocaleFromRequest(request, lang?.value);
+    const dict = getDict(locale);
+
     return (
-      <BaseHtml title="ConvertX | Setup" webroot={WEBROOT}>
+      <BaseHtml title={dict.setup.title} webroot={WEBROOT} locale={locale}>
         <main
           class={`
             mx-auto w-full max-w-4xl flex-1 px-2
             sm:px-4
           `}
         >
-          <h1 class="my-8 text-3xl">Welcome to ConvertX!</h1>
+          <h1 class="my-8 text-3xl" safe>
+            {dict.setup.welcome}
+          </h1>
           <article class="article p-0">
-            <header class="w-full bg-neutral-800 p-4">Create your account</header>
+            <header class="w-full bg-neutral-800 p-4" safe>
+              {dict.setup.createAccount}
+            </header>
             <form method="post" action={`${WEBROOT}/register`} class="p-4">
               <fieldset class="mb-4 flex flex-col gap-4">
                 <label class="flex flex-col gap-1">
-                  Email
+                  <span safe>{dict.email}</span>
                   <input
                     type="email"
                     name="email"
                     class="rounded-sm bg-neutral-800 p-3"
-                    placeholder="Email"
+                    placeholder={dict.email}
                     autocomplete="email"
                     required
                   />
                 </label>
                 <label class="flex flex-col gap-1">
-                  Password
+                  <span safe>{dict.password}</span>
                   <input
                     type="password"
                     name="password"
                     class="rounded-sm bg-neutral-800 p-3"
-                    placeholder="Password"
+                    placeholder={dict.password}
                     autocomplete="current-password"
                     required
                   />
                 </label>
               </fieldset>
-              <input type="submit" value="Create account" class="btn-primary" />
+              <input type="submit" value={dict.setup.createAccountBtn} class="btn-primary" />
             </form>
             <footer class="p-4">
-              Report any issues on{" "}
+              <span safe>{dict.setup.reportIssues} </span>
               <a
                 class={`
                   text-accent-500 underline
@@ -126,19 +137,23 @@ export const user = new Elysia()
       </BaseHtml>
     );
   })
-  .get("/register", ({ redirect }) => {
+  .get("/register", ({ redirect, request, cookie: { lang } }) => {
     if (!ACCOUNT_REGISTRATION) {
       return redirect(`${WEBROOT}/login`, 302);
     }
 
+    const locale = getLocaleFromRequest(request, lang?.value);
+    const dict = getDict(locale);
+
     return (
-      <BaseHtml webroot={WEBROOT} title="ConvertX | Register">
+      <BaseHtml webroot={WEBROOT} title={dict.register.title} locale={locale}>
         <>
           <Header
             webroot={WEBROOT}
             accountRegistration={ACCOUNT_REGISTRATION}
             allowUnauthenticated={ALLOW_UNAUTHENTICATED}
             hideHistory={HIDE_HISTORY}
+            locale={locale}
           />
           <main
             class={`
@@ -150,29 +165,29 @@ export const user = new Elysia()
               <form method="post" class="flex flex-col gap-4">
                 <fieldset class="mb-4 flex flex-col gap-4">
                   <label class="flex flex-col gap-1">
-                    Email
+                    <span safe>{dict.email}</span>
                     <input
                       type="email"
                       name="email"
                       class="rounded-sm bg-neutral-800 p-3"
-                      placeholder="Email"
+                      placeholder={dict.email}
                       autocomplete="email"
                       required
                     />
                   </label>
                   <label class="flex flex-col gap-1">
-                    Password
+                    <span safe>{dict.password}</span>
                     <input
                       type="password"
                       name="password"
                       class="rounded-sm bg-neutral-800 p-3"
-                      placeholder="Password"
+                      placeholder={dict.password}
                       autocomplete="current-password"
                       required
                     />
                   </label>
                 </fieldset>
-                <input type="submit" value="Register" class="w-full btn-primary" />
+                <input type="submit" value={dict.register.button} class="w-full btn-primary" />
               </form>
             </article>
           </main>
@@ -182,7 +197,7 @@ export const user = new Elysia()
   })
   .post(
     "/register",
-    async ({ body: { email, password }, set, redirect, jwt, cookie: { auth } }) => {
+    async ({ body: { email, password }, set, redirect, jwt, request, cookie: { auth, lang } }) => {
       if (!ACCOUNT_REGISTRATION && !FIRST_RUN) {
         return redirect(`${WEBROOT}/login`, 302);
       }
@@ -191,11 +206,13 @@ export const user = new Elysia()
         FIRST_RUN = false;
       }
 
+      const dict = getDict(getLocaleFromRequest(request, lang?.value));
+
       const existingUser = await db.query("SELECT * FROM users WHERE email = ?").get(email);
       if (existingUser) {
         set.status = 400;
         return {
-          message: "Email already in use.",
+          message: dict.api.emailInUse,
         };
       }
       const savedPassword = await Bun.password.hash(password);
@@ -207,7 +224,7 @@ export const user = new Elysia()
       if (!user) {
         set.status = 500;
         return {
-          message: "Failed to create user.",
+          message: dict.api.createUserFailed,
         };
       }
 
@@ -218,7 +235,7 @@ export const user = new Elysia()
       if (!auth) {
         set.status = 500;
         return {
-          message: "No auth cookie, perhaps your browser is blocking cookies.",
+          message: dict.api.noAuthCookie,
         };
       }
 
@@ -237,7 +254,7 @@ export const user = new Elysia()
   )
   .get(
     "/login",
-    async ({ jwt, redirect, cookie: { auth } }) => {
+    async ({ jwt, redirect, request, cookie: { auth, lang } }) => {
       if (FIRST_RUN) {
         return redirect(`${WEBROOT}/setup`, 302);
       }
@@ -253,14 +270,18 @@ export const user = new Elysia()
         auth.remove();
       }
 
+      const locale = getLocaleFromRequest(request, lang?.value);
+      const dict = getDict(locale);
+
       return (
-        <BaseHtml webroot={WEBROOT} title="ConvertX | Login">
+        <BaseHtml webroot={WEBROOT} title={dict.login.title} locale={locale}>
           <>
             <Header
               webroot={WEBROOT}
               accountRegistration={ACCOUNT_REGISTRATION}
               allowUnauthenticated={ALLOW_UNAUTHENTICATED}
               hideHistory={HIDE_HISTORY}
+              locale={locale}
             />
             <main
               class={`
@@ -272,24 +293,24 @@ export const user = new Elysia()
                 <form method="post" class="flex flex-col gap-4">
                   <fieldset class="mb-4 flex flex-col gap-4">
                     <label class="flex flex-col gap-1">
-                      Email
+                      <span safe>{dict.email}</span>
                       <input
                         type="email"
                         name="email"
                         class="rounded-sm bg-neutral-800 p-3"
-                        placeholder="Email"
+                        placeholder={dict.email}
                         autocomplete="email"
                         autofocus
                         required
                       />
                     </label>
                     <label class="flex flex-col gap-1">
-                      Password
+                      <span safe>{dict.password}</span>
                       <input
                         type="password"
                         name="password"
                         class="rounded-sm bg-neutral-800 p-3"
-                        placeholder="Password"
+                        placeholder={dict.password}
                         autocomplete="current-password"
                         required
                       />
@@ -301,11 +322,12 @@ export const user = new Elysia()
                         href={`${WEBROOT}/register`}
                         role="button"
                         class="w-full btn-secondary text-center"
+                        safe
                       >
-                        Register
+                        {dict.register.button}
                       </a>
                     ) : null}
-                    <input type="submit" value="Login" class="w-full btn-primary" />
+                    <input type="submit" value={dict.login.button} class="w-full btn-primary" />
                   </div>
                 </form>
               </article>
@@ -318,13 +340,15 @@ export const user = new Elysia()
   )
   .post(
     "/login",
-    async function handler({ body, set, redirect, jwt, cookie: { auth } }) {
+    async function handler({ body, set, redirect, jwt, request, cookie: { auth, lang } }) {
+      const dict = getDict(getLocaleFromRequest(request, lang?.value));
+
       const existingUser = db.query("SELECT * FROM users WHERE email = ?").as(User).get(body.email);
 
       if (!existingUser) {
         set.status = 403;
         return {
-          message: "Invalid credentials.",
+          message: dict.api.invalidCredentials,
         };
       }
 
@@ -333,7 +357,7 @@ export const user = new Elysia()
       if (!validPassword) {
         set.status = 403;
         return {
-          message: "Invalid credentials.",
+          message: dict.api.invalidCredentials,
         };
       }
 
@@ -344,7 +368,7 @@ export const user = new Elysia()
       if (!auth) {
         set.status = 500;
         return {
-          message: "No auth cookie, perhaps your browser is blocking cookies.",
+          message: dict.api.noAuthCookie,
         };
       }
 
@@ -377,7 +401,7 @@ export const user = new Elysia()
   })
   .get(
     "/account",
-    async ({ user, redirect }) => {
+    async ({ user, redirect, request, cookie: { lang } }) => {
       if (!user) {
         return redirect(`${WEBROOT}/`, 302);
       }
@@ -388,14 +412,18 @@ export const user = new Elysia()
         return redirect(`${WEBROOT}/`, 302);
       }
 
+      const locale = getLocaleFromRequest(request, lang?.value);
+      const dict = getDict(locale);
+
       return (
-        <BaseHtml webroot={WEBROOT} title="ConvertX | Account">
+        <BaseHtml webroot={WEBROOT} title={dict.account.title} locale={locale}>
           <>
             <Header
               webroot={WEBROOT}
               accountRegistration={ACCOUNT_REGISTRATION}
               allowUnauthenticated={ALLOW_UNAUTHENTICATED}
               hideHistory={HIDE_HISTORY}
+              locale={locale}
               loggedIn
             />
             <main
@@ -408,41 +436,41 @@ export const user = new Elysia()
                 <form method="post" class="flex flex-col gap-4">
                   <fieldset class="mb-4 flex flex-col gap-4">
                     <label class="flex flex-col gap-1">
-                      Email
+                      <span safe>{dict.email}</span>
                       <input
                         type="email"
                         name="email"
                         class="rounded-sm bg-neutral-800 p-3"
-                        placeholder="Email"
+                        placeholder={dict.email}
                         autocomplete="email"
                         value={userData.email}
                         required
                       />
                     </label>
                     <label class="flex flex-col gap-1">
-                      Password (leave blank for unchanged)
+                      <span safe>{dict.account.passwordUnchanged}</span>
                       <input
                         type="password"
                         name="newPassword"
                         class="rounded-sm bg-neutral-800 p-3"
-                        placeholder="Password"
+                        placeholder={dict.password}
                         autocomplete="new-password"
                       />
                     </label>
                     <label class="flex flex-col gap-1">
-                      Current Password
+                      <span safe>{dict.account.currentPassword}</span>
                       <input
                         type="password"
                         name="password"
                         class="rounded-sm bg-neutral-800 p-3"
-                        placeholder="Password"
+                        placeholder={dict.password}
                         autocomplete="current-password"
                         required
                       />
                     </label>
                   </fieldset>
                   <div role="group">
-                    <input type="submit" value="Update" class="w-full btn-primary" />
+                    <input type="submit" value={dict.account.update} class="w-full btn-primary" />
                   </div>
                 </form>
               </article>
@@ -457,10 +485,12 @@ export const user = new Elysia()
   )
   .post(
     "/account",
-    async function handler({ body, set, redirect, jwt, cookie: { auth } }) {
+    async function handler({ body, set, redirect, jwt, request, cookie: { auth, lang } }) {
       if (!auth?.value) {
         return redirect(`${WEBROOT}/login`, 302);
       }
+
+      const dict = getDict(getLocaleFromRequest(request, lang?.value));
 
       const user = await jwt.verify(auth.value);
       if (!user) {
@@ -480,7 +510,7 @@ export const user = new Elysia()
       if (!validPassword) {
         set.status = 403;
         return {
-          message: "Invalid credentials.",
+          message: dict.api.invalidCredentials,
         };
       }
 
@@ -494,7 +524,7 @@ export const user = new Elysia()
           .get(body.email);
         if (existingUser && existingUser.id.toString() !== user.id) {
           set.status = 409;
-          return { message: "Email already in use." };
+          return { message: dict.api.emailInUse };
         }
         fields.push("email");
         values.push(body.email);
