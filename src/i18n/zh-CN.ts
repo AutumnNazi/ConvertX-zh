@@ -119,7 +119,7 @@ export const zhCN: Dictionary = {
     uploading: "上传中...",
     convert: "转换",
     convertTitle: "转换",
-    usingFormat: "{target} 使用 {converter}",
+    usingFormat: "{target}（转换器：{converter}）",
     confirmDeleteJobs: "确定要删除 {n} 个任务吗？此操作无法撤销。",
     deleteSuccess: "成功删除 {n} 个任务。",
     deletePartialFailed: "有 {n} 个任务删除失败。",

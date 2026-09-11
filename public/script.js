@@ -8,6 +8,7 @@ const fileNames = [];
 let fileType;
 let pendingFiles = 0;
 let formatSelected = false;
+let selectedValue = "";
 
 const escapeHtml = (value) =>
   String(value).replace(
@@ -93,8 +94,11 @@ function handleFile(file) {
     })
       .then((res) => res.text())
       .then((html) => {
-        selectContainer.innerHTML = html;
-        updateSearchBar();
+        // 只替换候选格式区域，搜索框本体必须留着
+        if (targetsHost) {
+          targetsHost.innerHTML = html;
+          updateSearchBar();
+        }
       })
       .catch(console.error);
   }
@@ -105,13 +109,20 @@ function handleFile(file) {
   uploadFile(file);
 }
 
-const selectContainer = document.querySelector("form .select_container");
+const targetsHost = document.getElementById("convert_to_targets");
+
+/** 候选格式分组，/conversions 换列表后会重建 */
+const convertToGroups = {};
+let searchBarBound = false;
+
+// 弹层和 select 每次换列表都会被替换，事件回调里必须重新查询，不能用闭包里的旧引用
+const getPopup = () => document.querySelector(".convert_to_popup");
+const getSelect = () => document.querySelector("select[name='convert_to']");
 
 const updateSearchBar = () => {
   const convertToInput = document.querySelector("input[name='convert_to_search']");
-  const convertToPopup = document.querySelector(".convert_to_popup");
+  const convertToPopup = getPopup();
   const convertToGroupElements = document.querySelectorAll(".convert_to_group");
-  const convertToGroups = {};
   const convertToElement = document.querySelector("select[name='convert_to']");
 
   if (!convertToInput || !convertToPopup || !convertToElement) {
@@ -142,6 +153,10 @@ const updateSearchBar = () => {
     }
   };
 
+  for (const key of Object.keys(convertToGroups)) {
+    delete convertToGroups[key];
+  }
+
   for (const groupElement of convertToGroupElements) {
     const groupName = groupElement.dataset.converter;
 
@@ -150,7 +165,8 @@ const updateSearchBar = () => {
 
     for (const target of targets) {
       target.onmousedown = () => {
-        convertToElement.value = target.dataset.value;
+        selectedValue = target.dataset.value;
+        convertToElement.value = selectedValue;
         convertToInput.value = (I18N.usingFormat || "{target} using {converter}")
           .replace("{target}", target.dataset.target)
           .replace("{converter}", target.dataset.converter);
@@ -165,33 +181,61 @@ const updateSearchBar = () => {
     convertToGroups[groupName] = [targets, groupElement];
   }
 
+  // 候选格式整体换掉后，之前选中的值可能已经不在新列表里了
+  const stillAvailable = Array.from(convertToElement.options).some(
+    (option) => option.value === selectedValue,
+  );
+  if (!stillAvailable) {
+    selectedValue = "";
+    convertToInput.value = "";
+    formatSelected = false;
+    convertButton.disabled = true;
+  }
+  // select 每次都会跟着列表重建，需要把当前选择同步回去
+  convertToElement.value = selectedValue;
+
+  // 搜索框本身不会被替换，事件只绑一次
+  if (searchBarBound) {
+    return;
+  }
+  searchBarBound = true;
+
   convertToInput.addEventListener("input", (e) => {
     showMatching(e.target.value.toLowerCase());
   });
 
   convertToInput.addEventListener("search", () => {
     // when the user clears the search bar using the 'x' button
+    selectedValue = "";
+    getSelect().value = "";
     convertButton.disabled = true;
     formatSelected = false;
   });
 
-  convertToInput.addEventListener("blur", (e) => {
-    // Keep the popup open even when clicking on a target button
-    // for a split second to allow the click to go through
-    if (e?.relatedTarget?.classList?.contains("target")) {
-      convertToPopup.classList.add("hidden");
-      convertToPopup.classList.remove("flex");
-      return;
-    }
-
-    convertToPopup.classList.add("hidden");
-    convertToPopup.classList.remove("flex");
+  convertToInput.addEventListener("blur", () => {
+    hidePopup();
   });
 
   convertToInput.addEventListener("focus", () => {
-    convertToPopup.classList.remove("hidden");
-    convertToPopup.classList.add("flex");
+    showPopup();
   });
+
+  // 点搜索图标 / 箭头时 input 可能已聚焦，不会再触发 focus
+  convertToInput.closest("div")?.addEventListener("mousedown", showPopup);
+};
+
+const showPopup = () => {
+  const popup = getPopup();
+  if (!popup) return;
+  popup.classList.remove("hidden");
+  popup.classList.add("flex");
+};
+
+const hidePopup = () => {
+  const popup = getPopup();
+  if (!popup) return;
+  popup.classList.add("hidden");
+  popup.classList.remove("flex");
 };
 
 // Add a 'change' event listener to the file input element

@@ -10,6 +10,10 @@ const CONVERTERS = [
   { name: "Calibre", url: "https://calibre-ebook.com/" },
 ];
 
+/** 序列化为可直接嵌入 <script> 的 JSON，避免 `</script>` 提前闭合标签 */
+const jsonForScript = (value: unknown) =>
+  JSON.stringify(value).replace(/</g, "\\u003c").replace(/>/g, "\\u003e");
+
 /** 在首屏绘制前应用主题，避免闪白 / 闪黑 */
 const themeInitScript = `
 (function () {
@@ -63,7 +67,8 @@ export const BaseHtml = ({
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="webroot" content={webroot} />
-        <script safe>{`window.__I18N__=${JSON.stringify({
+        {/* 注意：@kitajs/html 的 safe 属性是「转义」而非「不转义」，脚本内容绝不能加 safe */}
+        <script>{`window.__I18N__=${jsonForScript({
           remove: dict.client.remove,
           uploading: dict.client.uploading,
           convert: dict.client.convert,
@@ -75,7 +80,7 @@ export const BaseHtml = ({
           deleteFailed: dict.client.deleteFailed,
           deleteError: dict.client.deleteError,
         })};`}</script>
-        <script safe>{themeInitScript}</script>
+        <script>{themeInitScript}</script>
         <title safe>{resolvedTitle}</title>
         <link rel="stylesheet" href={`${webroot}/generated.css`} />
         <link rel="apple-touch-icon" sizes="180x180" href={`${webroot}/apple-touch-icon.png`} />
@@ -90,10 +95,12 @@ export const BaseHtml = ({
             <span class="text-xs text-muted" safe>
               {dict.poweredBy}
             </span>
-            <div class="
-              flex flex-wrap items-center justify-center gap-4
-              sm:gap-5
-            ">
+            <div
+              class="
+                flex flex-wrap items-center justify-center gap-4
+                sm:gap-5
+              "
+            >
               {CONVERTERS.map((converter) => (
                 <a
                   class={`

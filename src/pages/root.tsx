@@ -191,10 +191,12 @@ export const root = new Elysia().use(userService).get(
             locale={locale}
             loggedIn
           />
-          <main class="
-            flex w-full flex-1 justify-center px-4 pt-14 pb-18
-            sm:px-8
-          ">
+          <main
+            class="
+              flex w-full flex-1 justify-center px-4 pt-14 pb-18
+              sm:px-8
+            "
+          >
             <div class="flex w-full max-w-[760px] flex-col gap-5">
               <h1 class="m-0 text-[34px] leading-[42px] font-semibold tracking-tight" safe>
                 {dict.home.title}
@@ -224,10 +226,13 @@ export const root = new Elysia().use(userService).get(
                   <input id="file-input" type="file" name="file" multiple class="sr-only" />
                 </label>
 
-                <div id="file-list" class="
-                  flex flex-col gap-4
-                  empty:hidden
-                " />
+                <div
+                  id="file-list"
+                  class="
+                    flex flex-col gap-4
+                    empty:hidden
+                  "
+                />
 
                 <div class="h-px w-full bg-soft" />
 
@@ -266,61 +271,65 @@ export const root = new Elysia().use(userService).get(
                       <ChevronIcon />
                     </div>
 
-                    <div
-                      class={`
-                        convert_to_popup absolute z-20 mt-2 hidden max-h-[50vh] w-full flex-col
-                        overflow-y-auto rounded-2xl border border-hairline bg-canvas p-2 shadow-lg
-                      `}
-                    >
-                      {Object.entries(getAllTargets()).map(([converter, targets]) => (
-                        <div
-                          class={`
-                            convert_to_group flex w-full flex-col border-b border-hairline p-3
-                            last:border-b-0
-                          `}
-                          data-converter={converter}
-                        >
-                          <div class="mb-2 w-full text-sm font-bold text-ink" safe>
-                            {converter}
+                    {/* 上传文件后，/conversions 只会替换这个容器，搜索框本体保持不变 */}
+                    <div id="convert_to_targets">
+                      <div
+                        class={`
+                          convert_to_popup absolute z-20 mt-2 hidden max-h-[50vh] w-full flex-col
+                          overflow-y-auto rounded-2xl border border-hairline bg-canvas p-2 shadow-lg
+                        `}
+                      >
+                        {Object.entries(getAllTargets()).map(([converter, targets]) => (
+                          <div
+                            class={`
+                              convert_to_group flex w-full flex-col border-b border-hairline p-3
+                              last:border-b-0
+                            `}
+                            data-converter={converter}
+                          >
+                            <div class="mb-2 w-full text-sm font-bold text-ink" safe>
+                              {converter}
+                            </div>
+                            <div class="convert_to_target flex flex-row flex-wrap gap-1">
+                              {targets.map((target) => (
+                                <button
+                                  // https://stackoverflow.com/questions/121499/when-a-blur-event-occurs-how-can-i-find-out-which-element-focus-went-to#comment82388679_33325953
+                                  tabindex={0}
+                                  class={`
+                                    target cursor-pointer rounded-full bg-surface px-3 py-1 text-sm
+                                    text-ink-secondary
+                                    hover:bg-accent hover:text-on-accent
+                                  `}
+                                  data-value={`${target},${converter}`}
+                                  data-target={target}
+                                  data-converter={converter}
+                                  type="button"
+                                  safe
+                                >
+                                  {target}
+                                </button>
+                              ))}
+                            </div>
                           </div>
-                          <div class="convert_to_target flex flex-row flex-wrap gap-1">
-                            {targets.map((target) => (
-                              <button
-                                tabindex={0}
-                                class={`
-                                  target cursor-pointer rounded-full bg-surface px-3 py-1 text-sm
-                                  text-ink-secondary
-                                  hover:bg-accent hover:text-on-accent
-                                `}
-                                data-value={`${target},${converter}`}
-                                data-target={target}
-                                data-converter={converter}
-                                type="button"
-                                safe
-                              >
-                                {target}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
 
-                    {/* 决定目标格式与使用的转换器 */}
-                    <select name="convert_to" aria-label={dict.home.convertTo} required hidden>
-                      <option selected disabled value="">
-                        {dict.home.convertTo}
-                      </option>
-                      {Object.entries(getAllTargets()).map(([converter, targets]) => (
-                        <optgroup label={converter}>
-                          {targets.map((target) => (
-                            <option value={`${target},${converter}`} safe>
-                              {target}
-                            </option>
-                          ))}
-                        </optgroup>
-                      ))}
-                    </select>
+                      {/* 决定目标格式与使用的转换器 */}
+                      <select name="convert_to" aria-label={dict.home.convertTo} required hidden>
+                        <option selected disabled value="">
+                          {dict.home.convertTo}
+                        </option>
+                        {Object.entries(getAllTargets()).map(([converter, targets]) => (
+                          <optgroup label={converter}>
+                            {targets.map((target) => (
+                              <option value={`${target},${converter}`} safe>
+                                {target}
+                              </option>
+                            ))}
+                          </optgroup>
+                        ))}
+                      </select>
+                    </div>
                   </div>
 
                   <button type="submit" class="btn-pill" disabled safe>
@@ -395,7 +404,7 @@ export const root = new Elysia().use(userService).get(
               </section>
             </div>
           </main>
-          <script src="script.js" defer />
+          <script src={`${WEBROOT}/script.js`} defer />
         </>
       </BaseHtml>
     );
