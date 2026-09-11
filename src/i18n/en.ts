@@ -12,21 +12,30 @@ export const en = {
 
   nav: {
     history: "History",
+    converters: "Converters",
     account: "Account",
     logout: "Logout",
     login: "Login",
     register: "Register",
     language: "Language",
+    theme: "Toggle theme",
   },
 
   home: {
     title: "Convert",
+    subtitle: "Convert between 1000+ formats. Your files stay on your own server.",
     chooseFile: "Choose a file",
-    dragHere: "drag it here",
+    dragHere: "or drag it here",
     searchPlaceholder: "Search for conversions",
     convertTo: "Convert to",
     convert: "Convert",
     uploading: "Uploading...",
+    recentResults: "Results",
+    viewAll: "View all",
+    download: "Download",
+    cancel: "Cancel",
+    viewLog: "View log",
+    noRecentResults: "No conversions yet. Upload a file to get started.",
   },
 
   setup: {

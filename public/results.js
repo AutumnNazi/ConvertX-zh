@@ -25,7 +25,7 @@ refreshData();
 
 window.downloadAll = function () {
   // Get all download links
-  const downloadLinks = document.querySelectorAll("tbody a[download]");
+  const downloadLinks = document.querySelectorAll("main a[download]");
 
   // Trigger download for each link
   downloadLinks.forEach((link, index) => {

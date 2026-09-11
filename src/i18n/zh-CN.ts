@@ -14,21 +14,30 @@ export const zhCN: Dictionary = {
 
   nav: {
     history: "历史记录",
+    converters: "转换器",
     account: "账户",
     logout: "退出登录",
     login: "登录",
     register: "注册",
     language: "语言",
+    theme: "切换主题",
   },
 
   home: {
     title: "转换",
+    subtitle: "支持 1000+ 种格式互转，文件留在你自己的服务器上。",
     chooseFile: "选择文件",
     dragHere: "或将文件拖拽到此处",
     searchPlaceholder: "搜索转换格式",
     convertTo: "转换为",
     convert: "转换",
     uploading: "上传中...",
+    recentResults: "转换结果",
+    viewAll: "查看全部",
+    download: "下载",
+    cancel: "取消",
+    viewLog: "查看日志",
+    noRecentResults: "还没有转换记录，先上传一个文件试试吧。",
   },
 
   setup: {

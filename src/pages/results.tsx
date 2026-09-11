@@ -15,6 +15,7 @@ import {
 import { DownloadIcon } from "../icons/download";
 import { DeleteIcon } from "../icons/delete";
 import { EyeIcon } from "../icons/eye";
+import { StatusIcon, extensionOf } from "../components/resultRow";
 import { userService } from "./user";
 
 function ResultsArticle({
@@ -29,128 +30,107 @@ function ResultsArticle({
   dict: Dictionary;
 }) {
   return (
-    <article class="article">
-      <div class="mb-4 flex items-center justify-between">
-        <h1 class="text-xl" safe>
+    <section class="mx-auto flex w-full max-w-[760px] flex-col gap-4 card">
+      <div class="flex items-center justify-between gap-4">
+        <h1 class="m-0 text-[34px] leading-[42px] font-semibold tracking-tight" safe>
           {dict.results.heading}
         </h1>
-        <div class="flex flex-row gap-4">
+        <div class="flex flex-row gap-2">
           <form action={`${WEBROOT}/delete/${job.id}`} method="POST">
             <button
               type="submit"
               style={files.length !== job.num_files ? "pointer-events: none;" : ""}
-              class="flex btn-secondary flex-row gap-2 text-contrast"
+              class="flex btn-secondary flex-row items-center gap-2 px-4 py-2 text-sm"
               {...(files.length !== job.num_files ? { disabled: true, "aria-busy": "true" } : "")}
             >
-              <DeleteIcon /> <p safe>{dict.results.delete}</p>
+              <DeleteIcon /> <span safe>{dict.results.delete}</span>
             </button>
           </form>
           <a
             style={files.length !== job.num_files ? "pointer-events: none;" : ""}
             href={`${WEBROOT}/archive/${job.id}`}
             download={`converted_files_${job.id}.tar`}
-            class="flex btn-primary flex-row gap-2 text-contrast"
+            class="flex btn-secondary flex-row items-center gap-2 px-4 py-2 text-sm"
             {...(files.length !== job.num_files ? { disabled: true, "aria-busy": "true" } : "")}
           >
-            <DownloadIcon /> <p safe>{dict.results.tar}</p>
+            <DownloadIcon /> <span safe>{dict.results.tar}</span>
           </a>
-          <button class="flex btn-primary flex-row gap-2 text-contrast" onclick="downloadAll()">
-            <DownloadIcon /> <p safe>{dict.results.all}</p>
+          <button class="btn-pill h-[38px] px-5 text-sm" onclick="downloadAll()">
+            <span safe>{dict.results.all}</span>
           </button>
         </div>
       </div>
+
       <progress
         max={job.num_files}
         {...(files.length === job.num_files ? { value: files.length } : "")}
         class={`
-          mb-4 inline-block h-2 w-full appearance-none overflow-hidden rounded-full border-0
-          bg-neutral-700 bg-none text-accent-500 accent-accent-500
-          [&::-moz-progress-bar]:bg-accent-500
-          [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:[background:none]
-          [&[value]::-webkit-progress-value]:bg-accent-500
+          inline-block h-1 w-full appearance-none overflow-hidden rounded-full border-0 bg-soft
+          bg-none text-accent accent-accent
+          [&::-moz-progress-bar]:bg-accent
+          [&::-webkit-progress-bar]:bg-soft
+          [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-accent
           [&[value]::-webkit-progress-value]:transition-[inline-size]
         `}
       />
-      <table
-        class={`
-          w-full table-auto rounded-sm bg-neutral-900 text-left
-          [&_td]:p-4
-          [&_tr]:rounded-sm [&_tr]:border-b [&_tr]:border-neutral-800
-        `}
-      >
-        <thead>
-          <tr>
-            <th
-              class={`
-                p-2
-                sm:px-4
-              `}
-            >
-              {dict.results.convertedFileName}
-            </th>
-            <th
-              class={`
-                p-2
-                sm:px-4
-              `}
-            >
-              {dict.status}
-            </th>
-            <th
-              class={`
-                p-2
-                sm:px-4
-              `}
-            >
-              {dict.actions}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {files.map((file) => {
-            const conversionFailed = isFailedStatus(file.status);
 
-            return (
-              <tr>
-                <td safe class="max-w-[20vw] truncate">
-                  {file.output_file_name}
-                </td>
-                <td safe>{translateJobStatus(dict, file.status)}</td>
-                <td class="flex flex-row gap-4">
-                  {conversionFailed ? (
-                    <span class="text-neutral-500" safe>
-                      {dict.unavailable}
+      <div class="flex flex-col">
+        {files.map((file, index) => {
+          const conversionFailed = isFailedStatus(file.status);
+          const done = !conversionFailed && file.status !== "pending";
+          const sourceExt = extensionOf(file.file_name);
+          const targetExt = extensionOf(file.output_file_name);
+
+          return (
+            <>
+              {index > 0 ? <div class="h-px w-full bg-soft" /> : null}
+              <div class="flex items-center justify-between gap-2.5 py-3.5">
+                <div class="flex min-w-0 items-center gap-2.5">
+                  <StatusIcon failed={conversionFailed} done={done} />
+                  <div class="flex min-w-0 flex-col gap-0.5">
+                    <span class="truncate text-[15px] font-semibold text-ink" safe>
+                      {file.output_file_name}
                     </span>
-                  ) : (
-                    <>
-                      <a
-                        class={`
-                          text-accent-500 underline
-                          hover:text-accent-400
-                        `}
-                        href={buildDownloadUrl(WEBROOT, outputPath, file.output_file_name)}
-                      >
-                        <EyeIcon />
-                      </a>
-                      <a
-                        class={`
-                          text-accent-500 underline
-                          hover:text-accent-400
-                        `}
-                        href={buildDownloadUrl(WEBROOT, outputPath, file.output_file_name)}
-                        download={file.output_file_name}
-                      >
-                        <DownloadIcon />
-                      </a>
-                    </>
-                  )}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </article>
+                    <span class="truncate text-xs text-muted" safe>
+                      {`${sourceExt} → ${targetExt} · ${translateJobStatus(dict, file.status)}`}
+                    </span>
+                  </div>
+                </div>
+
+                {conversionFailed ? (
+                  <span class="text-sm text-muted" safe>
+                    {dict.unavailable}
+                  </span>
+                ) : (
+                  <div class="flex shrink-0 items-center gap-4">
+                    <a
+                      class={`
+                        text-accent
+                        hover:text-accent-hover
+                      `}
+                      href={buildDownloadUrl(WEBROOT, outputPath, file.output_file_name)}
+                      title={file.output_file_name}
+                    >
+                      <EyeIcon />
+                    </a>
+                    <a
+                      class={`
+                        text-accent
+                        hover:text-accent-hover
+                      `}
+                      href={buildDownloadUrl(WEBROOT, outputPath, file.output_file_name)}
+                      download={file.output_file_name}
+                    >
+                      <DownloadIcon />
+                    </a>
+                  </div>
+                )}
+              </div>
+            </>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
@@ -197,8 +177,8 @@ export const results = new Elysia()
             />
             <main
               class={`
-                w-full flex-1 px-2
-                sm:px-4
+                flex w-full flex-1 justify-center px-4 pt-14 pb-18
+                sm:px-8
               `}
             >
               <ResultsArticle job={job} files={files} outputPath={outputPath} dict={dict} />

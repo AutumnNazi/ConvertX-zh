@@ -33,7 +33,7 @@ export const availableLocales = Object.keys(dictionaries) as Locale[];
 
 const localeLabels: Record<Locale, string> = {
   en: "English",
-  "zh-CN": "中文",
+  "zh-CN": "简体中文",
 };
 
 export function getLocaleLabel(locale: Locale): string {

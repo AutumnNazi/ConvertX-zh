@@ -47,8 +47,8 @@ export const history = new Elysia().use(userService).get(
           />
           <main
             class={`
-              w-full flex-1 px-2
-              sm:px-4
+              w-full flex-1 px-4 pt-14 pb-18
+              sm:px-8
             `}
           >
             <article class="article">
@@ -60,7 +60,7 @@ export const history = new Elysia().use(userService).get(
                   <button
                     id="delete-selected-btn"
                     class={`
-                      flex btn-secondary flex-row gap-2 text-contrast
+                      flex btn-secondary flex-row gap-2
                       disabled:cursor-not-allowed disabled:opacity-50
                     `}
                     disabled
